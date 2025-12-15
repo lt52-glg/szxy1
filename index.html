@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>罗涛的个人博客 | 记录生活与学习</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置Tailwind自定义主题 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#4f46e5',
+                        accent: '#8b5cf6',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            }
+            .bg-texture {
+                background-image: url('https://picsum.photos/id/1015/1920/1080');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+            }
+            .bg-overlay {
+                background-color: rgba(255, 255, 255, 0.95);
+            }
+            .hobby-bg {
+                background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.9) 100%);
+                backdrop-filter: blur(8px);
+            }
+            .blog-card-bg {
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(4px);
+            }
+        }
+    </style>
+    <style>
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* 加载动画 */
+        .loader {
+            border-top-color: #2563eb;
+            animation: spinner 0.8s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* 渐变背景 */
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        /* 渐变背景装饰 */
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://picsum.photos/id/1039/1920/1080');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        .gradient-bg > div {
+            position: relative;
+            z-index: 1;
+        }
+        /* 全局背景 */
+        body {
+            background-image: url('https://picsum.photos/id/1018/1920/1080');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        /* 留言板背景效果 */
+        #message {
+            position: relative;
+        }
+        #message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://picsum.photos/id/1070/1920/1080');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        #message > div {
+            position: relative;
+            z-index: 1;
+        }
+        /* 页脚背景 */
+        footer {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            position: relative;
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://picsum.photos/id/1047/1920/1080');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        footer > div {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 font-sans">
+    <!-- 加载动画 -->
+    <div id="loader" class="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <div class="loader w-16 h-16 border-4 border-gray-200 rounded-full"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- 品牌Logo -->
+                <a href="#" class="flex items-center space-x-2">
+                    <span class="text-primary text-2xl"><i class="fa fa-paper-plane"></i></span>
+                    <span class="font-bold text-xl text-dark">罗涛的博客</span>
+                </a>
+
+                <!-- 桌面端导航 -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-primary transition-colors">首页</a>
+                    <a href="#about" class="text-gray-700 hover:text-primary transition-colors">关于我</a>
+                    <a href="#hobbies" class="text-gray-700 hover:text-primary transition-colors">我的爱好</a>
+                    <a href="#blog" class="text-gray-700 hover:text-primary transition-colors">博客文章</a>
+                    <a href="#message" class="text-gray-700 hover:text-primary transition-colors">留言板</a>
+                </nav>
+
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-gray-700 hover:text-primary">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white/95 backdrop-blur-md border-t">
+            <div class="container mx-auto px-4 py-3 space-y-3">
+                <a href="#home" class="block py-2 text-gray-700 hover:text-primary">首页</a>
+                <a href="#about" class="block py-2 text-gray-700 hover:text-primary">关于我</a>
+                <a href="#hobbies" class="block py-2 text-gray-700 hover:text-primary">我的爱好</a>
+                <a href="#blog" class="block py-2 text-gray-700 hover:text-primary">博客文章</a>
+                <a href="#message" class="block py-2 text-gray-700 hover:text-primary">留言板</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 英雄区 -->
+        <section id="home" class="gradient-bg text-white py-20 md:py-32">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold mb-6 text-shadow">
+                        嗨，我是罗涛
+                    </h1>
+                    <p class="text-xl md:text-2xl mb-8 opacity-90">
+                        记录生活点滴，分享学习心得
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="#about" class="bg-white text-primary px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-colors">
+                            了解更多
+                        </a>
+                        <a href="#blog" class="bg-transparent border-2 border-white px-8 py-3 rounded-full font-medium hover:bg-white/10 transition-colors">
+                            浏览博客
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于我 -->
+        <section id="about" class="py-20 bg-white/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">关于我</h2>
+                    
+                    <div class="flex flex-col md:flex-row gap-8 items-center">
+                        <!-- 头像 -->
+                        <div class="w-48 h-48 mx-auto md:mx-0 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+                            <img src="https://picsum.photos/seed/luotao/400/400" alt="罗涛的头像" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <!-- 个人信息 -->
+                        <div class="flex-1 bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-md">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">姓名：</span>
+                                    <span>罗涛</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">学号：</span>
+                                    <span>23170404013</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">性别：</span>
+                                    <span>男</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">年龄：</span>
+                                    <span>20岁</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">专业：</span>
+                                    <span>计算机科学与技术</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary font-medium w-24 inline-block">邮箱：</span>
+                                    <span>luotao@example.com</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="mt-8">
+                                <h3 class="text-xl font-semibold mb-4">个人简介</h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    大家好！我是罗涛，一名计算机科学与技术专业的学生。我热爱编程和技术探索，
+                                    喜欢在学习中不断挑战自我。除了专业学习外，我也喜欢记录生活中的点滴感悟，
+                                    分享自己的学习经验和技术心得。这个博客是我的个人空间，希望能和大家一起交流成长。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 我的爱好 -->
+        <section id="hobbies" class="py-20 hobby-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">我的爱好</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 爱好1 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-code"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">编程开发</h3>
+                        <p class="text-gray-700">
+                            热爱编程，擅长Python、JavaScript等编程语言，喜欢开发实用的小工具和Web应用。
+                            经常参与开源项目，不断提升自己的编程能力。
+                        </p>
+                    </div>
+                    
+                    <!-- 爱好2 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">阅读学习</h3>
+                        <p class="text-gray-700">
+                            喜欢阅读技术书籍和科普读物，尤其是计算机科学、人工智能相关的书籍。
+                            也喜欢阅读文学作品，丰富自己的精神世界。
+                        </p>
+                    </div>
+                    
+                    <!-- 爱好3 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-futbol-o"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">体育运动</h3>
+                        <p class="text-gray-700">
+                            喜欢打篮球和跑步，每周都会进行体育锻炼。运动不仅能强身健体，
+                            还能缓解学习压力，让我保持良好的精神状态。
+                        </p>
+                    </div>
+                    
+                    <!-- 爱好4 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-headphones"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">音乐欣赏</h3>
+                        <p class="text-gray-700">
+                            喜欢听各种类型的音乐，尤其是轻音乐和摇滚乐。音乐能让我放松心情，
+                            激发创作灵感，是生活中不可或缺的一部分。
+                        </p>
+                    </div>
+                    
+                    <!-- 爱好5 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-camera"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">摄影创作</h3>
+                        <p class="text-gray-700">
+                            喜欢用相机记录生活中的美好瞬间，擅长风景摄影和人像摄影。
+                            通过摄影培养自己的审美能力和观察力。
+                        </p>
+                    </div>
+                    
+                    <!-- 爱好6 -->
+                    <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-6 card-hover border border-gray-100">
+                        <div class="text-accent text-3xl mb-4">
+                            <i class="fa fa-gamepad"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">游戏娱乐</h3>
+                        <p class="text-gray-700">
+                            适当玩一些益智类和竞技类游戏，既能放松身心，又能锻炼反应能力和思维能力。
+                            但会合理控制时间，不影响学习和生活。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 博客文章 -->
+        <section id="blog" class="py-20 bg-white/90 backdrop-blur-md">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">博客文章</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 文章1 -->
+                    <article class="blog-card-bg border border-gray-200 rounded-xl overflow-hidden shadow-sm card-hover">
+                        <img src="https://picsum.photos/seed/blog1/600/400" alt="Python学习心得" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-500 mb-3">
+                                <span><i class="fa fa-calendar-o mr-1"></i> 2025-01-15</span>
+                                <span class="ml-4"><i class="fa fa-tag mr-1"></i> 编程学习</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Python入门学习心得分享</h3>
+                            <p class="text-gray-700 mb-4 line-clamp-3">
+                                作为一名计算机专业的学生，Python是我接触的第一门编程语言。本文分享了我学习Python的过程和一些实用的学习方法，希望能帮助初学者少走弯路。
+                            </p>
+                            <a href="#" class="text-primary hover:text-secondary font-medium inline-flex items-center">
+                                阅读更多 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <!-- 文章2 -->
+                    <article class="blog-card-bg border border-gray-200 rounded-xl overflow-hidden shadow-sm card-hover">
+                        <img src="https://picsum.photos/seed/blog2/600/400" alt="大学生活" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-500 mb-3">
+                                <span><i class="fa fa-calendar-o mr-1"></i> 2025-02-20</span>
+                                <span class="ml-4"><i class="fa fa-tag mr-1"></i> 大学生活</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">我的大学生活感悟</h3>
+                            <p class="text-gray-700 mb-4 line-clamp-3">
+                                进入大学已经一年多了，从最初的迷茫到逐渐找到方向，这段经历让我成长了很多。分享一些我对大学生活的理解和感悟，希望能给学弟学妹们一些参考。
+                            </p>
+                            <a href="#" class="text-primary hover:text-secondary font-medium inline-flex items-center">
+                                阅读更多 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                            </a>
+                        </div>
+                    </article>
+                    
+                    <!-- 文章3 -->
+                    <article class="blog-card-bg border border-gray-200 rounded-xl overflow-hidden shadow-sm card-hover">
+                        <img src="https://picsum.photos/seed/blog3/600/400" alt="前端开发" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex items-center text-sm text-gray-500 mb-3">
+                                <span><i class="fa fa-calendar-o mr-1"></i> 2025-03-10</span>
+                                <span class="ml-4"><i class="fa fa-tag mr-1"></i> 前端开发</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Tailwind CSS使用体验</h3>
+                            <p class="text-gray-700 mb-4 line-clamp-3">
+                                作为一名前端爱好者，我尝试了很多CSS框架，其中Tailwind CSS给我留下了深刻的印象。本文分享我的使用体验和一些实用技巧。
+                            </p>
+                            <a href="#" class="text-primary hover:text-secondary font-medium inline-flex items-center">
+                                阅读更多 <i class="fa fa-arrow-right ml-2 text-sm"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+                
+                <div class="text-center mt-12">
+                    <a href="#" class="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-primary/90 transition-colors shadow-md">
+                        查看更多文章 <i class="fa fa-angle-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 留言板 -->
+        <section id="message" class="py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">留言板</h2>
+                
+                <div class="max-w-4xl mx-auto">
+                    <!-- 留言表单 -->
+                    <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-md p-6 mb-10 border border-gray-100">
+                        <h3 class="text-xl font-semibold mb-6">留下你的留言</h3>
+                        <form id="messageForm" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                                    <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors bg-white/80" placeholder="请输入你的姓名">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">邮箱</label>
+                                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors bg-white/80" placeholder="请输入你的邮箱">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">留言内容</label>
+                                <textarea id="content" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors bg-white/80" placeholder="请输入你的留言内容"></textarea>
+                            </div>
+                            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors shadow-md">
+                                提交留言
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- 留言列表 -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-semibold mb-4">最新留言</h3>
+                        
+                        <!-- 留言1 -->
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-sm p-6 border border-gray-100">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center">
+                                    <img src="https://picsum.photos/seed/user1/100/100" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <h4 class="font-medium">张三</h4>
+                                        <p class="text-sm text-gray-500">2025-03-15 10:30</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">
+                                罗同学的博客内容很丰富，希望能看到更多关于编程学习的分享，加油！
+                            </p>
+                        </div>
+                        
+                        <!-- 留言2 -->
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-sm p-6 border border-gray-100">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center">
+                                    <img src="https://picsum.photos/seed/user2/100/100" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <h4 class="font-medium">李四</h4>
+                                        <p class="text-sm text-gray-500">2025-03-12 15:45</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">
+                                同为计算机专业的学生，很认同你的学习理念。希望能和你交流一下Python学习的经验。
+                            </p>
+                        </div>
+                        
+                        <!-- 留言3 -->
+                        <div class="bg-white/95 backdrop-blur-md rounded-xl shadow-sm p-6 border border-gray-100">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center">
+                                    <img src="https://picsum.photos/seed/user3/100/100" alt="用户头像" class="w-10 h-10 rounded-full mr-3">
+                                    <div>
+                                        <h4 class="font-medium">王五</h4>
+                                        <p class="text-sm text-gray-500">2025-03-08 09:15</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">
+                                博客设计得很美观，内容也很有价值。期待看到更多精彩的文章！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">罗涛的博客</h3>
+                    <p class="text-gray-400 mb-4">
+                        记录生活，分享学习，共同成长
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fa fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fa fa-qq text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">关于我</a></li>
+                        <li><a href="#hobbies" class="text-gray-400 hover:text-white transition-colors">我的爱好</a></li>
+                        <li><a href="#blog" class="text-gray-400 hover:text-white transition-colors">博客文章</a></li>
+                        <li><a href="#message" class="text-gray-400 hover:text-white transition-colors">留言板</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">联系我</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope-o mr-2"></i>
+                            <span>luotao@example.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-phone mr-2"></i>
+                            <span>138****1234</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-map-marker mr-2"></i>
+                            <span>中国 · 北京</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 罗涛的个人博客 | 学号：23170404013 | 保留所有权利</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 加载动画
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.classList.add('opacity-0');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }, 800);
+        });
+
+        // 移动端菜单
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            // 切换图标
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('shadow-md');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow-md');
+                header.classList.add('shadow-sm');
+            }
+        });
+
+        // 留言表单提交
+        const messageForm = document.getElementById('messageForm');
+        messageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const content = document.getElementById('content').value;
+            
+            if (!name || !email || !content) {
+                alert('请填写完整的留言信息！');
+                return;
+            }
+            
+            // 模拟提交成功
+            alert('留言提交成功！感谢你的留言。');
+            messageForm.reset();
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动端菜单
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    const icon = menuBtn.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
